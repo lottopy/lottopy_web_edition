@@ -4,7 +4,6 @@ import pandas as pd
 import requests
 from collections import Counter
 import csv
-from datetime import datetime
 
 def get_data():
     url = 'https://wvlottery.com/draw-games/daily-3/?game-analyze=daily-3&what-to-search=historysearch&date-range=-1'
