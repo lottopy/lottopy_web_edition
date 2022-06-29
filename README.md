@@ -7,3 +7,5 @@ Previously there were records dating back to 1992 that were removed by the websi
 I am welcoming anyone who wants to to port it to their own state to do so. I currently have a website hosting my numbers to be refreshed daily. Collaboration and suggestion at a more accurate algorithm is also welcome.
 
 Good luck!
+
+Old numbers have been re-added to analysis.

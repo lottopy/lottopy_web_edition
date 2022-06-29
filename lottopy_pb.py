@@ -6,6 +6,9 @@ from collections import Counter
 import csv
 
 def get_data():
+    df_old = pd.read_excel('./excel_lotto_records/lotto.xlsx')
+    salvaged = df_old[['Date', 'Numbers', 'PB', 'PPX', 'Winners WV Only', 'Payout WV Only']]
+
     url = 'https://wvlottery.com/draw-games/powerball/?game-analyze=powerball&what-to-search=historysearch&date-range=-1'
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
@@ -16,7 +19,7 @@ def get_data():
     dfs = pd.read_html(r.text)
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0]
+    df = dfs[0].append(salvaged, ignore_index=True)
     df2 = df[['Date', 'Numbers', 'PB', 'PPX', 'Winners WV Only', 'Payout WV Only']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
