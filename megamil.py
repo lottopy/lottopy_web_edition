@@ -18,10 +18,10 @@ def get_data():
 
     # Get web data
     r = requests.get(url, headers=header)
-    dfs = pd.read_html(r.text)
+    dfs = list(pd.read_html(r.text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0].append(salvaged, ignore_index=True)
+    df = pd.concat([dfs[0], salvaged], ignore_index=True)
     df2 = df[['Date', 'Numbers', 'MB', 'MP']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
@@ -50,13 +50,13 @@ for n in range(0, 25):
 sorted_nums = sorted(likely_nums)
 total_freq = sum(frequency + frequency_mb) 
 Chance = frac(total_freq, 302575350) # Chance = number call freq / all possible numbers i.e. 11238513
-Winning_Numbers = str("-".join(sorted_nums))
+Forecast = str("-".join(sorted_nums))
 
-#print(f"Likely numbers are . . .  {Winning_Numbers} MB: {MB}\n"
+#print(f"Likely numbers are . . .  {Forecast} MB: {MB}\n"
 #f"With percent chance of winning being {Chance}")
 
-d = dict(((k, eval (k)) for k in ('Winning_Numbers', 'MB', 'Chance')))
-h = 'Winning_Numbers', 'MB', 'Chance'
+d = dict(((k, eval (k)) for k in ('Forecast', 'MB', 'Chance')))
+h = 'Forecast', 'MB', 'Chance'
 f = open('mm_ans.csv', 'w', encoding='utf_8')
 writer = csv.DictWriter(f, fieldnames=h)
 writer.writeheader()

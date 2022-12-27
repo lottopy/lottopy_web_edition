@@ -16,10 +16,10 @@ def get_data():
     }
     # Get web data
     r = requests.get(url, headers=header)
-    dfs = pd.read_html(r.text)
+    dfs = list(pd.read_html(r.text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0].append(salvaged, ignore_index=True)
+    df = pd.concat([dfs[0], salvaged], ignore_index=True)
     df2 = df[['Date', 'Numbers', 'PB', 'PPX', 'Winners WV Only', 'Payout WV Only']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
@@ -48,13 +48,13 @@ for n in range(0, 26):
 sorted_nums = sorted(likely_nums)
 total_freq = sum(frequency + frequency_pb) 
 Chance = frac(total_freq, 292201338) # Chance = number call freq / all possible numbers i.e. 292201338
-Winning_Numbers = str("-".join(sorted_nums))
+Forecast = str("-".join(sorted_nums))
 
-#print(f"Likely numbers are . . .  {Winning_Numbers} PB: {PB}\n"
+#print(f"Likely numbers are . . .  {Forecast} PB: {PB}\n"
 #f"With percent chance of winning being {Chance}")
 
-d = dict(((k, eval (k)) for k in ('Winning_Numbers', 'PB', 'Chance')))
-h = 'Winning_Numbers', 'PB', 'Chance'
+d = dict(((k, eval (k)) for k in ('Forecast', 'PB', 'Chance')))
+h = 'Forecast', 'PB', 'Chance'
 f = open('pb_ans.csv', 'w', encoding='utf_8')
 writer = csv.DictWriter(f, fieldnames=h)
 writer.writeheader()

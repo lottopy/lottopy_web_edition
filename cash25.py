@@ -17,10 +17,10 @@ def get_data():
 
     # Get web data
     r = requests.get(url, headers=header)
-    dfs = pd.read_html(r.text)
+    dfs = list(pd.read_html(r.text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0].append(salvaged, ignore_index=True)
+    df = pd.concat([dfs[0], salvaged], ignore_index=True)
     df2 = df[['Date', 'Numbers']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
@@ -43,13 +43,13 @@ for n in range(0, 25):
 sorted_nums = sorted(likely_nums)
 total_freq = sum(frequency) 
 Chance  = frac(total_freq, 177100) # Chance = number call freq / all possible numbers i.e. 177100
-Winning_Numbers = str("-".join(sorted_nums))
+Forecast = str("-".join(sorted_nums))
 
-#print(f"Likely numbers are . . . {Winning_Numbers} \n" 
+#print(f"Likely numbers are . . . {Forecast} \n" 
 #f"With percent chance of winning being {Chance}")
 
-d = dict(((k, eval (k)) for k in ('Winning_Numbers','Chance')))
-h = 'Winning_Numbers', 'Chance'
+d = dict(((k, eval (k)) for k in ('Forecast','Chance')))
+h = 'Forecast', 'Chance'
 f = open('c25_ans.csv', 'w', encoding='utf_8')
 writer = csv.DictWriter(f, fieldnames=h)
 writer.writeheader()

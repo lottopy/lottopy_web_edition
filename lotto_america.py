@@ -1,5 +1,5 @@
 # WVLottopy: Matteo DiBiagio
-#from django_lottopy.lottopy_site.lottopy.lottopy_web_edition.megamil import Winning_Numbers
+#from django_lottopy.lottopy_site.lottopy.lottopy_web_edition.megamil import Forecast
 from fractions import Fraction as frac
 import pandas as pd
 import requests
@@ -18,10 +18,10 @@ def get_data():
 
     # Get web data
     r = requests.get(url, headers=header)
-    dfs = pd.read_html(r.text)
+    dfs = list(pd.read_html(r.text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0].append(salvaged, ignore_index=True)
+    df = pd.concat([dfs[0], salvaged], ignore_index=True)
     df2 = df[['Date', 'Numbers', 'SB', 'All Star']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
@@ -50,13 +50,13 @@ for n in range(0, 10):
 sorted_nums = sorted(likely_nums)
 total_freq = sum(frequency + frequency_sb) 
 Chance = frac(total_freq, 25989600) # Chance = number call freq / all possible numbers i.e. 25,989,600
-Winning_Numbers = str("-".join(sorted_nums))
+Forecast = str("-".join(sorted_nums))
 
-#print(f"Likely numbers are . . .  {Winning_Numbers} SB: {SB}\n"
+#print(f"Likely numbers are . . .  {Forecast} SB: {SB}\n"
 #f"With percent chance of winning being {Chance}")
 
-d = dict(((k, eval (k)) for k in ('Winning_Numbers', 'SB', 'Chance')))
-h = 'Winning_Numbers', 'SB', 'Chance'
+d = dict(((k, eval (k)) for k in ('Forecast', 'SB', 'Chance')))
+h = 'Forecast', 'SB', 'Chance'
 f = open('la_ans.csv', 'w', encoding='utf_8')
 writer = csv.DictWriter(f, fieldnames=h)
 writer.writeheader()

@@ -39,13 +39,13 @@ for n in range(0, 10):
 sorted_nums = sorted(likely_nums)
 total_freq = sum(frequency) 
 Chance  = frac(total_freq, 15000) # Chance = number call freq / all possible numbers i.e. 1000
-Winning_Numbers = str("-".join(sorted_nums))
+Forecast = str("-".join(sorted_nums))
 
-#print(f"Likely numbers are . . .  {Winning_Numbers} \n"
+#print(f"Likely numbers are . . .  {Forecast} \n"
 #f"With percent chance of winning being {Chance}")
 
-d = dict(((k, eval (k)) for k in ('Winning_Numbers','Chance')))
-h = 'Winning_Numbers', 'Chance'
+d = dict(((k, eval (k)) for k in ('Forecast','Chance')))
+h = 'Forecast', 'Chance'
 f = open('d3_ans.csv', 'w', encoding='utf_8')
 writer = csv.DictWriter(f, fieldnames=h)
 writer.writeheader()
