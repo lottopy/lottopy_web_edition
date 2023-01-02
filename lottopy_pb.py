@@ -45,7 +45,7 @@ for n in range(0, 26):
     PB = [v[0] for v in most_common_pb]
     frequency_pb = [v[-1] for v in most_common_pb]
 
-sorted_nums = sorted(likely_nums)
+sorted_nums = sorted(likely_nums, key=lambda x: (len(x), x))
 total_freq = sum(frequency + frequency_pb) 
 Chance = frac(total_freq, 292201338) # Chance = number call freq / all possible numbers i.e. 292201338
 Forecast = str("-".join(sorted_nums))

@@ -39,7 +39,7 @@ for n in range(0, 9):
     likely_nums = [v[0] for v in most_common]
     frequency = [v[-1] for v in most_common]
 
-sorted_nums = sorted(likely_nums)
+sorted_nums = sorted(likely_nums, key=lambda x: (len(x), x))
 total_freq = sum(frequency) 
 Chance  = frac(total_freq, 10000) # Chance = number call freq / all possible numbers i.e. 10000
 Forecast = str("-".join(sorted_nums))
