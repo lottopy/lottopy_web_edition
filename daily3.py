@@ -12,8 +12,8 @@ def get_data():
         "X-Requested-With": "XMLHttpRequest"
     }
     # Get web data
-    r = requests.get(url, headers=header)
-    dfs = pd.read_html(r.text)
+    #r = requests.get(url, headers=header)
+    dfs = list(pd.read_html(requests.get(url, headers=header).text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
     df = dfs[0]
