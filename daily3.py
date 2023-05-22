@@ -39,7 +39,7 @@ for n in range(0, 10):
 sorted_nums = sorted(likely_nums, key=lambda x: (len(x), x))
 total_freq = sum(frequency) 
 Chance  = frac(total_freq, 15000) # Chance = number call freq / all possible numbers i.e. 1000
-Forecast = str("-".join(sorted_nums))
+Forecast = str(" - ".join(sorted_nums))
 
 #print(f"Likely numbers are . . .  {Forecast} \n"
 #f"With percent chance of winning being {Chance}")

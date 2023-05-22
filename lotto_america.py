@@ -12,13 +12,11 @@ def get_data():
 
     url = 'https://wvlottery.com/draw-games/lotto-america/?game-analyze=lotto-america&what-to-search=historysearch&date-range=-1'
     header = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
-        "X-Requeste, 'PPX', 'Winners WV Only', 'Payout WV Onlyd-With": "XMLHttpRequest"
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
     }
 
     # Get web data
-    r = requests.get(url, headers=header)
-    dfs = list(pd.read_html(r.text))
+    dfs = list(pd.read_html(requests.get(url, headers=header).text))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
     df = pd.concat([dfs[0], salvaged], ignore_index=True)
@@ -50,7 +48,7 @@ for n in range(0, 10):
 sorted_nums = sorted(likely_nums, key=lambda x: (len(x), x))
 total_freq = sum(frequency + frequency_sb) 
 Chance = frac(total_freq, 25989600) # Chance = number call freq / all possible numbers i.e. 25,989,600
-Forecast = str("-".join(sorted_nums))
+Forecast = str(" - ".join(sorted_nums))
 
 #print(f"Likely numbers are . . .  {Forecast} SB: {SB}\n"
 #f"With percent chance of winning being {Chance}")
