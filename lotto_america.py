@@ -1,9 +1,9 @@
 # WVLottopy: Matteo DiBiagio
-#from django_lottopy.lottopy_site.lottopy.lottopy_web_edition.megamil import Forecast
 from fractions import Fraction as frac
 import pandas as pd
 import requests
 from collections import Counter
+from io import StringIO
 import csv
 
 def get_data():
@@ -14,9 +14,9 @@ def get_data():
     header = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/113.0",
     }
-
+    r = requests.get(url, headers=header)
     # Get web data
-    dfs = list(pd.read_html(requests.get(url, headers=header).text))
+    dfs = list(pd.read_html(StringIO(r.text)))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
     df = pd.concat([dfs[0], salvaged], ignore_index=True)

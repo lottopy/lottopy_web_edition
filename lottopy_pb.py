@@ -3,6 +3,7 @@ from fractions import Fraction as frac
 import pandas as pd
 import requests
 from collections import Counter
+from io import StringIO
 import csv
 
 def get_data():
@@ -14,8 +15,9 @@ def get_data():
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
         "X-Requested-With": "XMLHttpRequest"
     }
+    r = requests.get(url, headers=header)
     # Get web data
-    dfs = list(pd.read_html(requests.get(url, headers=header).text))
+    dfs = list(pd.read_html(StringIO(r.text)))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
     df = pd.concat([dfs[0], salvaged], ignore_index=True)

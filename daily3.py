@@ -3,19 +3,24 @@ from fractions import Fraction as frac
 import pandas as pd
 import requests
 from collections import Counter
+from io import StringIO
 import csv
 
 def get_data():
+    df_old = pd.read_excel('./excel_lotto_records/cash25.xlsx')
+    salvaged = df_old[['Date', 'Numbers']]
+
     url = 'https://wvlottery.com/draw-games/daily-3/?game-analyze=daily-3&what-to-search=historysearch&date-range=-1'
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
         "X-Requested-With": "XMLHttpRequest"
     }
+    r = requests.get(url, headers=header)
     # Get web data
-    dfs = list(pd.read_html(requests.get(url, headers=header).text))
+    dfs = list(pd.read_html(StringIO(r.text)))
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = dfs[0]
+    df = pd.concat([dfs[0], salvaged], ignore_index=True)
     df2 = df[['Date', 'Numbers']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
