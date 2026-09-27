@@ -1,2 +1,6 @@
 # Redis?
 dump.rdb
+# CSV files
+*.csv
+# Git
+.git/* 
