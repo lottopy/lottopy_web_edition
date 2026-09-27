@@ -1,1 +1,1 @@
-echo "Powerball" && python lottopy_pb.py && echo "MegaMillions" && python megamil.py && echo "Lotto America" && python lotto_america.py && echo "Daily3" && python daily3.py && echo "Daily4" && python daily4.py && echo "Cash25" && python cash25.py
+echo "Powerball" && python lottopy_pb.py && echo "MegaMillions" && python megamil.py && echo "Lotto America" && python lotto_america.py && echo "Daily3" && python daily3.py && echo "Daily4" && python daily4.py && echo "Cash25" && python cash25.py && echo "Cash Pop" && python cashpop.py
