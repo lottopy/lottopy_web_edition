@@ -4,3 +4,9 @@ dump.rdb
 *.csv
 # Git
 .git/* 
+# Python cache, cron output, lock files and pre-change sheet backups made on the server
+__pycache__/
+cron.log*
+excel_lotto_records/.*.lock
+*.pre-recording
+*.pre-ny-backfill

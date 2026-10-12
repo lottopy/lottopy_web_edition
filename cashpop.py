@@ -1,6 +1,7 @@
 # WVLottopy: Matteo DiBiagio
 from fractions import Fraction as frac
 import pandas as pd
+import records
 import requests
 from collections import Counter
 import csv
@@ -12,17 +13,22 @@ def get_data():
     }
     # Get web data, cash pop draws every 15 min so only use the last ~3000 draws (about a month)
     web = {'Date': [], 'Numbers': []}
+    ids, times = [], []
     page = 0
     while page < 6:
         r = requests.get(url + str(page), headers=header)
         data = r.json()
         for x in data['content']:
-            web['Date'].append(x['drawingDate'])
+            web['Date'].append(records.draw_day(x))
             web['Numbers'].append('–'.join(str(n['data']) for n in x['resultData'] if n['type'] == 'REGULAR'))
+            ids.append(x['externalId'])
+            times.append(x['drawDate'])
         if data['last']:
             break
         page += 1
     df2 = pd.DataFrame(web)
+    # The site only keeps a year of cash pop draws, keep our own record of every draw
+    records.merge_save('./excel_lotto_records/cash_pop.xlsx', df2, ids=ids, times=times)
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
     return date, nums

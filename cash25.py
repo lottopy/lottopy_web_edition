@@ -2,6 +2,7 @@
 from fractions import Fraction as frac
 from math import comb
 import pandas as pd
+import records
 import requests
 from collections import Counter
 import csv
@@ -22,7 +23,7 @@ def get_data():
         r = requests.get(url + str(page), headers=header)
         data = r.json()
         for x in data['content']:
-            web['Date'].append(x['drawingDate'])
+            web['Date'].append(records.draw_day(x))
             web['Numbers'].append('–'.join(str(n['data']) for n in x['resultData'] if n['type'] == 'REGULAR'))
         if data['last']:
             break
@@ -30,7 +31,8 @@ def get_data():
     dfs = [pd.DataFrame(web)]
     pd.set_option('display.max_rows', None)
     # Specifies no max rows, otherwise only shows 10 records
-    df = pd.concat([dfs[0], salvaged], ignore_index=True)
+    # Adds any draw not in the sheet yet, so the excel record keeps growing
+    df = records.merge_save('./excel_lotto_records/cash25.xlsx', dfs[0], fallback=salvaged)
     df2 = df[['Date', 'Numbers']]
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
