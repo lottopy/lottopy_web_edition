@@ -1,6 +1,7 @@
-# WVLottopy records: keeps the excel history files growing as draws happen
-# wvlottery.com only keeps ~3 years of results (Cash Pop one year), so every run appends any draw that is
-# not in the sheet yet. Nothing is ever removed or rewritten, existing rows stay exactly as they are.
+# WVLottopy: Matteo DiBiagio
+# wvlottery.com only keeps about 3 years of results (cash pop only 1) so this adds every new draw
+# to the excel sheets each run, that way the records keep growing instead of getting lost again.
+# Nothing already in the sheets gets changed or removed.
 import fcntl
 import os
 import shutil
@@ -10,8 +11,8 @@ import pandas as pd
 
 
 def draw_day(x):
-    # the site's drawingDate is the UTC date, so late evening draws (powerball, mega millions, lotto america at ~11pm ET)
-    # come out a day late. The real draw day is drawDate converted to Eastern time.
+    # drawingDate from the site is in UTC so the late draws (powerball, megamillions, lotto america)
+    # show up a day late, converting drawDate to eastern time gives the real day
     try:
         from datetime import datetime
         from zoneinfo import ZoneInfo
@@ -22,7 +23,7 @@ def draw_day(x):
 
 
 def _fmt_date(d):
-    # site gives 2026-10-09, the sheets use 10/09/2026
+    # site dates are 2026-10-09, the sheets use 10/09/2026
     s = str(d)[:10]
     if len(s) == 10 and s[4] == '-':
         return f'{s[5:7]}/{s[8:10]}/{s[0:4]}'
@@ -30,18 +31,18 @@ def _fmt_date(d):
 
 
 def _fmt_nums(n):
-    # site numbers come split by an en dash, the sheets use a hyphen
+    # site splits numbers with – and the sheets use -
     return str(n).replace('–', '-').strip()
 
 
 def _newer_first(df):
-    # some sheets are oldest first, some newest first
+    # some of the sheets are newest first and some are oldest first
     d = pd.to_datetime(df['Date'], errors='coerce').dropna()
     return len(d) > 1 and d.iloc[0] > d.iloc[-1]
 
 
 def merge_save(path, web_df, fallback=None, ids=None, times=None):
-    # recording must never break the forecast: if anything goes wrong the old behaviour (site + sheet) is used
+    # if saving fails for whatever reason just use the site + old sheet so the numbers still come out
     try:
         return _merge_save(path, web_df, ids, times)
     except Exception as e:
@@ -52,9 +53,8 @@ def merge_save(path, web_df, fallback=None, ids=None, times=None):
 
 
 def _merge_save(path, web_df, ids=None, times=None):
-    """Append draws from the site (web_df: Date, Numbers[, bonus col]) that the sheet at path does not have yet.
-    ids: optional list of site draw ids, same length as web_df. Returns the whole sheet as Date/Numbers/[bonus]
-    so callers can keep counting from one source. If the site gave nothing the sheet is left alone."""
+    # web_df is Date, Numbers and the bonus ball column if the game has one
+    # ids is the site's draw id for each row (cash pop needs it), returns the whole sheet
     bonus = [c for c in web_df.columns if c not in ('Date', 'Numbers')]
     if os.path.exists(path):
         old = pd.read_excel(path)
@@ -74,9 +74,9 @@ def _merge_save(path, web_df, ids=None, times=None):
     def key(r):
         return (str(r['Date']), _fmt_nums(r['Numbers'])) + tuple(str(int(r[c])) if str(r[c]) not in ('nan', 'None', '') else '' for c in bonus)
 
+    # rows with a draw id get matched by the id, date + numbers is only for the old rows without one
+    # (cash pop draws 1 number out of 15 like 90 times a day so the same date + number happens a lot)
     have_ids = set(old['DrawID'].dropna().astype(str)) if 'DrawID' in old.columns else set()
-    # Rows that carry a draw id are matched by id only. The Date+Numbers match is just for old rows without an id:
-    # cash pop draws one number out of 15 about 90 times a day, so other draws on the same day share Date+Numbers.
     no_id = old['DrawID'].isna() if 'DrawID' in old.columns else pd.Series(True, index=old.index)
     have = Counter(key(r) for _, r in old[no_id].iterrows())
     keep = []
@@ -94,6 +94,7 @@ def _merge_save(path, web_df, ids=None, times=None):
         lock = open(os.path.join(os.path.dirname(path) or '.', '.' + os.path.basename(path) + '.lock'), 'w')
         fcntl.flock(lock, fcntl.LOCK_EX)
         try:
+            # one time backup of the sheet before it ever gets added to
             backup = path + '.pre-recording'
             if os.path.exists(path) and not os.path.exists(backup):
                 shutil.copy2(path, backup)
@@ -112,5 +113,4 @@ def _merge_save(path, web_df, ids=None, times=None):
         print(f'records: {os.path.basename(path)} +{len(new)} new draws')
     else:
         full = old
-    out = full[['Date', 'Numbers'] + bonus].copy()
-    return out
+    return full[['Date', 'Numbers'] + bonus].copy()

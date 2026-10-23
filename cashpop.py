@@ -11,7 +11,7 @@ def get_data():
     header = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36",
     }
-    # Get web data, cash pop draws every 15 min so only use the last ~3000 draws (about a month)
+    # Get web data, cash pop is drawn every 15 min so ~3000 draws is about a month
     web = {'Date': [], 'Numbers': []}
     ids, times = [], []
     page = 0
@@ -27,7 +27,7 @@ def get_data():
             break
         page += 1
     df2 = pd.DataFrame(web)
-    # The site only keeps a year of cash pop draws, keep our own record of every draw
+    # site only keeps a year of cash pop, keep our own record
     records.merge_save('./excel_lotto_records/cash_pop.xlsx', df2, ids=ids, times=times)
     date = list(df2['Date']) 
     nums = list(df2['Numbers'].astype('str')) 
@@ -41,7 +41,7 @@ for x in nums:
     hyphenfree.append(x.replace('–',', ')) 
 splitlist = ", ".join(hyphenfree)
 sep = splitlist.split(", ")
-# Only keep 1 - 15, just in case anything weird comes back from the site
+# only 1 - 15
 sep = [x for x in sep if x.isdigit() and 1 <= int(x) <= 15]
 
 for n in range(0, 15):
@@ -51,7 +51,7 @@ for n in range(0, 15):
 
 Forecast = likely_nums[0]
 Backups = str(" - ".join(likely_nums[1:]))
-Chance = frac(1, 15) # Only one number is drawn out of 15 so every pick has the same chance
+Chance = frac(1, 15) # one number out of 15
 
 #print(f"Likely number is . . .  {Forecast} Backups: {Backups}\n"
 #f"With percent chance of winning being {Chance}")
